@@ -115,13 +115,10 @@ class ImJoyPlugin():
         segmentation = self.mws_segmentation(affinities)
 
         api.log('mws done')
-        segmentation = segmentation % 255
-        api.log('uniques' + str(np.unique(segmentation)))
+        segmentation = (segmentation % 255).astype(np.uint8)
 
-        imsave("/home/swolf/local/data/hackathon2019/debug2.png", segmentation)
-
-        blend_image = segmentation[:128, :128] % 255
-        blend_image = np.repeat(blend_image[..., None], 3, axis=-1)
+        blend_image = segmentation[:512, :512]
+        api.log('uniques' + str(np.unique(blend_image)))
         api.log("blend_shape ", blend_image.shape)
         name_plot = "/home/swolf/pictures/tmp.png"
         imsave(name_plot, blend_image)
@@ -132,23 +129,6 @@ class ImJoyPlugin():
             result = base64.b64encode(data).decode('ascii')
             imgurl = 'data:image/png;base64,' + result
             api.createWindow(type = 'imjoy/image', w=12, h=15,data = {"src": imgurl})
-
-        
-        # blend_image = blend_image.tobytes()
-
-        # api.log('display results')
-
-
-        # api.log("QQQQQQ" + str(type(blend_image)))
-
-        # result = base64.b64encode(blend_image).decode('ascii')
-        # imgurl = 'data:image/png;base64,' + result
-
-        # api.log('create window' + str(len(imgurl)))
-        # api.createWindow({'type': 'imjoy/image',
-        #                  'w': 16,
-        #                  'h': 16,
-        #                  "data": {"src": imgurl}})
 
 
 api.export(ImJoyPlugin())
